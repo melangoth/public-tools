@@ -20,6 +20,12 @@ public class Recognition {
         useMap = useCollection.getOcrmap();
     }
 
+    public Recognition(OcrMap ocrMap, String mapPath) throws IOException {
+        String json = Helper.getFileContent(mapPath);
+        useCollection = DigitCollection.getInstanceFromJson(json);
+        useMap = useCollection.getOcrmap();
+    }
+
     public Recognition(OcrMap ocrmap, BufferedImage image, int[] digitsOrder) {
         useMap = ocrmap;
         useCollection = this.createMap(image, digitsOrder);
