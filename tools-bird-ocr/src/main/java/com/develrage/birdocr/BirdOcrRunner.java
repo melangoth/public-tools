@@ -15,18 +15,18 @@ public class BirdOcrRunner {
 
     public static void main(String[] args) {
         BirdOcrRunner runner = new BirdOcrRunner();
-        // runner.testMapCreation();
-        runner.testRecognition();
+//        runner.testMapCreation(OcrMap.TANK, "global_resources/ocrmaps/TANK.png", new int[]{4, 5, 8, 9, 2, 3, 6, 7, 1, 0}, "global_resources/ocrmaps/TANK.json");
+        runner.testRecognition(OcrMap.TANK, "global_resources/ocrmaps/TANK.png");
     }
 
-    public void testRecognition() {
+    public void testRecognition(OcrMap mapEnum, String subjectSourcePath) {
         DigitMap[] maps = null;
         Recognition rec = null;
 
         try {
-            rec = new Recognition(OcrMap.WHTHICK);
+            rec = new Recognition(mapEnum);
             File file = new File(
-                    "global_resources/caps/thick/all_mod.png");
+                    subjectSourcePath);
             FileInputStream fis = new FileInputStream(file);
 
             // given image
@@ -49,20 +49,21 @@ public class BirdOcrRunner {
         }
     }
 
-    public void testMapCreation() {
+    public void testMapCreation(OcrMap mapEnum, String mapSourcePath, int[] mapDigitsOrder, String mapSavePath) {
         // create map from image
         DigitCollection dc = null;
         Recognition rec;
 
         try {
             File file = new File(
-                    "global_resources/caps/thick/all.png");
+                    mapSourcePath);
             FileInputStream fis = new FileInputStream(file);
 
             // given image
             BufferedImage image = ImageIO.read(fis);
-            rec = new Recognition(OcrMap.WHTHICK, image, new int[]{4, 1, 8,
-                    2, 9, 7, 6, 0, 3, 5});
+            rec = new Recognition(
+                    mapEnum, image,
+                    mapDigitsOrder);
             dc = rec.getDigitCollection();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -77,14 +78,14 @@ public class BirdOcrRunner {
             System.out.println();
             System.out.println(json);
 
-            Helper.putFileContent("ocrmaps/" + dc.ocrmap + ".json", json);
+            Helper.putFileContent(mapSavePath, json);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         // create map pojo from json, and validate it by saving itself to file
     /*
-	 * try { DigitCollection dcin =
+     * try { DigitCollection dcin =
 	 * DigitCollection.getInstanceFromJson(json);
 	 * Helper.putFileContent("ocrmaps/" + dc.ocrmap + "_2.json",
 	 * dcin.jsonFromDigitCollection()); } catch (JsonParseException e) {
