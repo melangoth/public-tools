@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class Recognition {
     OcrMap useMap;
     DigitCollection useCollection;
+
     public Recognition(OcrMap ocrmap) throws JsonParseException,
             JsonMappingException, IOException {
         String json = Helper.getFileContent("global_resources/ocrmaps/" + ocrmap + ".json");
@@ -34,11 +35,17 @@ public class Recognition {
     public boolean isNumPixel(Color color) {
         // TODO: This is hardcoded. Make Reco. params!
         boolean judge = false;
+        int greyscale;
 
         // WHTHICK
         switch (useMap) {
-            case TANK:
-                int greyscale = 155;
+            case TANKA:
+                greyscale = 175;
+                judge = (color.getRed() > greyscale && color.getGreen() > greyscale && color
+                        .getBlue() > greyscale);
+                break;
+            case TANKP:
+                greyscale = 155;
                 judge = (color.getRed() > greyscale && color.getGreen() > greyscale && color
                         .getBlue() > greyscale);
                 break;
@@ -169,6 +176,6 @@ public class Recognition {
     }
 
     public enum OcrMap {
-        AUTO, WHTHICK, WHTHIN, TANK
+        AUTO, WHTHICK, WHTHIN, TANKP, TANKA, TANK
     }
 }

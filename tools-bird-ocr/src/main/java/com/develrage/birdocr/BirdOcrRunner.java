@@ -15,8 +15,9 @@ public class BirdOcrRunner {
 
     public static void main(String[] args) {
         BirdOcrRunner runner = new BirdOcrRunner();
-//        runner.testMapCreation(OcrMap.TANK, "global_resources/ocrmaps/TANK.png", new int[]{4, 5, 8, 9, 2, 3, 6, 7, 1, 0}, "global_resources/ocrmaps/TANK.json");
-        runner.testRecognition(OcrMap.TANK, "global_resources/ocrmaps/TANK.png");
+//        runner.testMapCreation(OcrMap.TANKA, "global_resources/ocrmaps/TANKA.png", new int[]{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}, "global_resources/ocrmaps/TANKA.json");
+//        runner.testRecognition(OcrMap.TANKA, "global_resources/ocrmaps/TANKA.png");
+//        runner.testRecognition(OcrMap.TANKA, "global_resources/caps/tank/237.png");
     }
 
     public void testRecognition(OcrMap mapEnum, String subjectSourcePath) {
