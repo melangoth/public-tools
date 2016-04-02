@@ -3,6 +3,7 @@ package com.develrage.birdocr;
 import com.develrage.birdocr.helpers.Helper;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 
 // TODO: library use, do not log, do not catch but throw exceptions!
 public class Recognition {
+    private static final Logger log = Logger.getLogger(Recognition.class);
     OcrMap useMap;
     DigitCollection useCollection;
 
@@ -64,7 +66,7 @@ public class Recognition {
 
     private DigitCollection createMap(BufferedImage image, int[] digitsOrder) {
 
-        System.out.println(image.getColorModel());
+//        System.out.println(image.getColorModel());
 
         DigitMap[] digitmaps = extractDigitMapsFromImage(image);
 
@@ -76,9 +78,9 @@ public class Recognition {
             dc.digitmaps.add(digitmaps[dmi]);
 
             // draw
-            System.out.println();
-            System.out.println("Digit: " + digitsOrder[dmi] + " comes next...");
-            System.out.println(getDigitStringFromDigitMap(digitmaps[dmi]));
+            log.debug("");
+            log.debug("Digit: " + digitsOrder[dmi] + " comes next...");
+            log.debug(getDigitStringFromDigitMap(digitmaps[dmi]));
         }
         dc.calcMetaData();
         return dc;
