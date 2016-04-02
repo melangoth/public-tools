@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class DigitCollection {
+    private static final Logger log = Logger.getLogger(DigitCollection.class);
     public OcrMap ocrmap;
     public int minWidth;
     public int minHeight;
@@ -68,7 +70,6 @@ public class DigitCollection {
         int digit = -1;
         int bestmatch = 80;
 
-        System.out.println();
         for (DigitMap refdm : digitmaps) {
             int match = 100;
 
@@ -87,7 +88,7 @@ public class DigitCollection {
                     }
                 }
             }
-            System.out.print(" " + refdm.digit + ":" + match);
+            log.debug(" " + refdm.digit + ":" + match);
 
             if (match > bestmatch) {
                 digit = refdm.digit;
