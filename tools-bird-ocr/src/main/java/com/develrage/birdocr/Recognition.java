@@ -26,11 +26,16 @@ public class Recognition {
     }
 
     public boolean isNumPixel(Color color) {
-        // TODO: make difference on Sources!
+        // TODO: This is hardcoded. Make Reco. params!
         boolean judge = false;
 
         // WHTHICK
         switch (useMap) {
+            case TANK:
+                int greyscale = 155;
+                judge = (color.getRed() > greyscale && color.getGreen() > greyscale && color
+                        .getBlue() > greyscale);
+                break;
             case WHTHICK:
                 judge = (color.getRed() > 200 && color.getGreen() > 200 && color
                         .getBlue() > 200);
@@ -158,6 +163,6 @@ public class Recognition {
     }
 
     public enum OcrMap {
-        AUTO, WHTHICK, WHTHIN
+        AUTO, WHTHICK, WHTHIN, TANK
     }
 }
