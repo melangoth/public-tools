@@ -6,7 +6,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Helper {
     private static final Logger log = Logger.getLogger(Helper.class);
@@ -23,28 +22,25 @@ public class Helper {
     }
 
     public static String getFileContent(String path) throws FileNotFoundException {
-        String fileContent = null;
-        File f = new File(path);
-        Scanner sc = null;
-        try {
-            sc = new Scanner(f);
-            fileContent = "";
-            while (sc.hasNextLine()) {
-                fileContent += sc.nextLine();
-            }
-        } catch (Throwable t) {
-            throw t;
-        } finally {
-            if (sc != null) {
-                try {
-                    sc.close();
-                } catch (Exception e) {
-                    log.warn("Unable to close Scanner", e);
-                }
-            }
-        }
+        if (path.toLowerCase().startsWith("classpath://")) {
+            String temp = path.substring("classpath://".length());
+            if (temp.contains("/")) {
+                String classname = temp.substring(0, temp.indexOf("/"));
+                String relative = temp.substring(temp.indexOf("/") + 1);
 
-        return fileContent;
+                try {
+                    Class clazz = Class.forName(classname);
+                    return getFileContentFromClasspath(clazz, relative);
+                } catch (ClassNotFoundException e) {
+                    log.warn(String.format("Failed to find class: %s", classname), e);
+                    throw new FileNotFoundException(String.format("Invalid class name given in classpath: %s", path));
+                }
+            } else {
+                throw new FileNotFoundException(String.format("Invalid classpath file given: %s", path));
+            }
+        } else {
+            return getFileContentFromFilesystem(path);
+        }
     }
 
     public static String getFileContentFromFilesystem(String path) throws FileNotFoundException {
@@ -54,6 +50,7 @@ public class Helper {
     }
 
     public static String getFileContentFromClasspath(Class clazz, String path) throws FileNotFoundException {
+        //log.debug(String.format("Getting file from classpath %s/%s", clazz.getName(), path));
         InputStream input = clazz.getClassLoader().getResourceAsStream(path);
 
         if (input != null) {
