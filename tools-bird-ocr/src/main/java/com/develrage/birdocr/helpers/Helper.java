@@ -22,26 +22,37 @@ public class Helper {
         return j;
     }
 
-    public static String getFileContent(String path) {
-        String json = "";
+    public static String getFileContent(String path) throws FileNotFoundException {
+        String fileContent = null;
         File f = new File(path);
         Scanner sc = null;
         try {
             sc = new Scanner(f);
+            fileContent = "";
             while (sc.hasNextLine()) {
-                json += sc.nextLine();
+                fileContent += sc.nextLine();
             }
-            return json;
-        } catch (FileNotFoundException e) {
-            log.error("Error reading file", e);
-            return null;
+        } catch (Throwable t) {
+            throw t;
         } finally {
-            try {
-                sc.close();
-            } catch (Exception e) {
-                log.warn("Unable to close Scanner", e);
+            if (sc != null) {
+                try {
+                    sc.close();
+                } catch (Exception e) {
+                    log.warn("Unable to close Scanner", e);
+                }
             }
         }
+
+        return fileContent;
+    }
+
+    public static String getFileContent(String path, boolean fromClasspath) {
+        String content = "";
+
+        InputStream input = null;
+
+        return "bla";
     }
 
     public static void putFileContent(String path, String content) {
