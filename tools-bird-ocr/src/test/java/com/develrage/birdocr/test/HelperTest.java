@@ -4,7 +4,6 @@ import com.develrage.birdocr.helpers.Helper;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 
@@ -15,30 +14,13 @@ public class HelperTest {
     private static final Logger log = Logger.getLogger(HelperTest.class);
 
     @Test(expected = FileNotFoundException.class)
-    public void test_getFileContent_fromFS_expectFNFE() throws Exception {
+    public void test_getFileContent_FromFilesystem_wronPath() throws Exception {
         Helper.getFileContent("global_resources/test_unexists.txt");
     }
 
     @Test
-    public void test_getFileContent_FromFilesystem_unexists() {
-        String content = null;
-        try {
-            content = Helper.getFileContent("global_resources/test_unexists.txt");
-        } catch (FileNotFoundException e) {
-            log.trace("Exception:", e);
-        }
-        log.debug(String.format("content: %s", content));
-        assert content == null;
-    }
-
-    @Test
-    public void test_getFileContent_FromFilesystem() {
-        String content = null;
-        try {
-            content = Helper.getFileContent(new File("../global_resources/test.txt").getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            log.trace("Exception:", e);
-        }
+    public void test_getFileContent_FromFilesystem() throws FileNotFoundException {
+        String content = Helper.getFileContent("../global_resources/test.txt");
         log.debug(String.format("content: %s", content));
         assert content.equals("fs test file");
     }
@@ -59,9 +41,13 @@ public class HelperTest {
         assert content.equals("classpath test file 2");
     }
 
-    public void test_getFileContent_fromClasspath_wrongClass() {
+    @Test(expected = FileNotFoundException.class)
+    public void test_getFileContent_fromClasspath_wrongClass() throws FileNotFoundException {
+        throw new FileNotFoundException("NOT IPLEMENTED TEST");
     }
 
-    public void test_getFileContent_fromClasspath_unexists() {
+    @Test(expected = FileNotFoundException.class)
+    public void test_getFileContent_fromClasspath_wrongPath() throws FileNotFoundException {
+        throw new FileNotFoundException("NOT IPLEMENTED TEST");
     }
 }
