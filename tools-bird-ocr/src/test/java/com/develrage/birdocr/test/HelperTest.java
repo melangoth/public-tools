@@ -44,10 +44,27 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContent_fromClasspath() {
-        String content = Helper.getFileContent("bla", true);
+    public void test_getFileContentFromClasspath() {
+        String content = Helper.getFileContentFromClasspath(HelperTest.class, "testfile1.txt");
 
         log.debug(String.format("content: %s", content));
-        assert content.equals("bla");
+        assert content.equals("classpath test file 1");
+    }
+
+    @Test
+    public void test_getFileContentFromClasspath_subfolder() {
+        String content = Helper.getFileContentFromClasspath(HelperTest.class, "subfolder/testfile2.txt");
+
+        log.debug(String.format("content: %s", content));
+        assert content.equals("classpath test file 2");
+    }
+
+    public void test_getFileContent_fromClasspath_wrongClass() {
+    }
+
+    public void test_getFileContent_fromClasspath_unexists() {
+    }
+
+    public void test_getFileContent_fromClasspath_subfolder() {
     }
 }
