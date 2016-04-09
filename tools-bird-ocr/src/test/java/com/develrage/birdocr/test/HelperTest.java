@@ -44,7 +44,7 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContentFromClasspath() {
+    public void test_getFileContentFromClasspath() throws FileNotFoundException {
         String content = Helper.getFileContentFromClasspath(HelperTest.class, "testfile1.txt");
 
         log.debug(String.format("content: %s", content));
@@ -52,7 +52,7 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContentFromClasspath_subfolder() {
+    public void test_getFileContentFromClasspath_subfolder() throws FileNotFoundException {
         String content = Helper.getFileContentFromClasspath(HelperTest.class, "subfolder/testfile2.txt");
 
         log.debug(String.format("content: %s", content));

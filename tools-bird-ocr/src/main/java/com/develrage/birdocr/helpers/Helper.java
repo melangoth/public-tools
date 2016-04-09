@@ -47,35 +47,32 @@ public class Helper {
         return fileContent;
     }
 
-    public static String getFileContentFromClasspath(Class clazz, String path) {
+    public static String getFileContentFromClasspath(Class clazz, String path) throws FileNotFoundException {
         InputStream input = clazz.getClassLoader().getResourceAsStream(path);
 
-        String content = null;
         if (input != null) {
-            try {
-                content = getStringFromInputStream(input);
-            } catch (IOException e) {
-                log.error(String.format("Failed to read from InputStream %s/%s",
-                        clazz.getName(), path), e);
-            }
-
-            return content;
+            return getStringFromInputStream(input);
         } else {
-            throw new RuntimeException(String.format(
+            throw new FileNotFoundException(String.format(
                     "Failed to open file from classpath %s/%s",
                     clazz.getName(), path));
         }
     }
 
-    private static String getStringFromInputStream(InputStream input) throws IOException {
-        String content = "";
+    private static String getStringFromInputStream(InputStream input) {
+        String content;
         int nextByte;
 
-        while ((nextByte = input.read()) != -1) {
-            content += ((char) nextByte);
+        try {
+            content = "";
+            while ((nextByte = input.read()) != -1) {
+                content += ((char) nextByte);
+            }
+            return content;
+        } catch (IOException e) {
+            log.error("Failed to read from InputStream", e);
+            return null;
         }
-
-        return content;
     }
 
     public static void putFileContent(String path, String content) {
