@@ -47,6 +47,12 @@ public class Helper {
         return fileContent;
     }
 
+    public static String getFileContentFromFilesystem(String path) throws FileNotFoundException {
+        InputStream input = new FileInputStream(path);
+
+        return getStringFromInputStream(input);
+    }
+
     public static String getFileContentFromClasspath(Class clazz, String path) throws FileNotFoundException {
         InputStream input = clazz.getClassLoader().getResourceAsStream(path);
 
@@ -68,11 +74,20 @@ public class Helper {
             while ((nextByte = input.read()) != -1) {
                 content += ((char) nextByte);
             }
-            return content;
         } catch (IOException e) {
             log.error("Failed to read from InputStream", e);
-            return null;
+            content = null;
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    log.warn("Failed to close InputStream", e);
+                }
+            }
         }
+
+        return content;
     }
 
     public static void putFileContent(String path, String content) {

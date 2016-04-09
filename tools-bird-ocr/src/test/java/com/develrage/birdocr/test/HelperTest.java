@@ -20,7 +20,7 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContent_fromFS_unexists() {
+    public void test_getFileContent_FromFilesystem_unexists() {
         String content = null;
         try {
             content = Helper.getFileContent("global_resources/test_unexists.txt");
@@ -32,7 +32,7 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContent_fromFS() {
+    public void test_getFileContent_FromFilesystem() {
         String content = null;
         try {
             content = Helper.getFileContent(new File("../global_resources/test.txt").getAbsolutePath());
@@ -44,7 +44,7 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContentFromClasspath() throws FileNotFoundException {
+    public void test_getFileContent_FromClasspath() throws FileNotFoundException {
         String content = Helper.getFileContentFromClasspath(HelperTest.class, "testfile1.txt");
 
         log.debug(String.format("content: %s", content));
@@ -52,7 +52,7 @@ public class HelperTest {
     }
 
     @Test
-    public void test_getFileContentFromClasspath_subfolder() throws FileNotFoundException {
+    public void test_getFileContent_FromClasspath_subfolder() throws FileNotFoundException {
         String content = Helper.getFileContentFromClasspath(HelperTest.class, "subfolder/testfile2.txt");
 
         log.debug(String.format("content: %s", content));
@@ -63,8 +63,5 @@ public class HelperTest {
     }
 
     public void test_getFileContent_fromClasspath_unexists() {
-    }
-
-    public void test_getFileContent_fromClasspath_subfolder() {
     }
 }
