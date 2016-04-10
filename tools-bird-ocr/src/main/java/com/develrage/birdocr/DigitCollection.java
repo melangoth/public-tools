@@ -19,6 +19,7 @@ public class DigitCollection {
     public int minHeight;
     public int maxWidth;
     public int maxHeight;
+    public int treshold = 80;
     public ArrayList<DigitMap> digitmaps = new ArrayList<DigitMap>();
 
     public static DigitCollection getInstanceFromJson(String json)
@@ -51,6 +52,14 @@ public class DigitCollection {
         return mapper.writeValueAsString(digitcollection);
     }
 
+    public int getTreshold() {
+        return treshold;
+    }
+
+    public void setTreshold(int treshold) {
+        this.treshold = treshold;
+    }
+
     /*
      * calc row integer from row binary code (RBC)
      *
@@ -66,9 +75,8 @@ public class DigitCollection {
      * diff all RBC, define max pixel difference, sort matches by pixel
      * difference
      */
-    public int findDigit(DigitMap givendm) {
+    public int findDigit(DigitMap givendm, int treshold) {
         int digit = -1;
-        int bestmatch = 80;
 
         for (DigitMap refdm : digitmaps) {
             int match = 100;
@@ -88,15 +96,19 @@ public class DigitCollection {
                     }
                 }
             }
-            log.debug(" " + refdm.digit + ":" + match);
+            log.trace(" " + refdm.digit + ":" + match);
 
-            if (match > bestmatch) {
+            if (match > treshold) {
                 digit = refdm.digit;
-                bestmatch = match;
+                treshold = match;
             }
         }
 
         return digit;
+    }
+
+    public int findDigit(DigitMap givendm) {
+        return findDigit(givendm, treshold);
     }
 
     public void calcMetaData() {

@@ -49,6 +49,7 @@ public class DebugRunner {
             // get maps for subject
             String digits = "";
             DigitCollection recMaps = rec.getDigitCollection();
+            recMaps.setTreshold(80);
 
             // define boundaries
             int imgWidth = image.getWidth();
@@ -67,6 +68,7 @@ public class DebugRunner {
             while (x < imgWidth - minWidth) {
                 // get first row of interest in sub-image
                 int y = rec.getFirstRowOfInterestFromImageRectange(image, new ImageRectangle(x, 0, imgWidth, imgHeight));
+                boolean jump = false;
                 while (y < imgHeight - minHeight) {
                     // on actual x,y coordinates, walk through maps
                     for (DigitMap dm : recMaps.getDigitmaps()) {
@@ -74,20 +76,31 @@ public class DebugRunner {
                         if (imgWidth - x - dm.getWidth() >= 0 && imgHeight - y - dm.getHeight() >= 0) {
                             // define actual ImageRectangle
                             ImageRectangle ir = new ImageRectangle(x, y, dm.getWidth(), dm.getHeight());
-                            log.debug(String.format("ImageRectangle [%d, %d, %d, %d]", ir.getX(), ir.getY(), ir.getWidth(), ir.getHeight()));
+                            log.trace(String.format("ImageRectangle [%d, %d, %d, %d]", ir.getX(), ir.getY(), ir.getWidth(), ir.getHeight()));
 
-                            // remove later
+                            // check if found any digit
                             DigitMap tmpdm = rec.getDigitMapOfImageRectagle(image, ir);
-                            System.out.println(rec.getDigitStringFromDigitMap(tmpdm));
+                            int found = recMaps.findDigit(tmpdm);
+                            if (found > -1) {
+                                System.out.println(rec.getDigitStringFromDigitMap(tmpdm));
+                                log.debug("Found digit: " + found);
+                                digits += Integer.toString(found);
+                                x += tmpdm.getWidth();
+                                y = 0;
+                                jump = true;
+                                break;
+                            }
                         }
                     }
+                    if (jump) break;
                     // step
                     y++;
                 }
 
                 // step
-                x += step;
+                if (!jump) x += step;
             }
+            log.info("Found digits: " + digits);
 
         } else {
             log.warn("Image is null!");
