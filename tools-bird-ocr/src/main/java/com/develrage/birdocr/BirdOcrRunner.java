@@ -17,21 +17,23 @@ public class BirdOcrRunner {
         BirdOcrRunner runner = new BirdOcrRunner();
 //        runner.testMapCreation(OcrMap.TANKA, "global_resources/ocrmaps/TANKA.png", new int[]{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}, "global_resources/ocrmaps/TANKA.json");
 //        runner.testRecognition(OcrMap.TANKA, "global_resources/ocrmaps/TANKA.png");
-        runner.testRecognition(OcrMap.TANKA, "global_resources/ocrmaps/TANKPI.png");
+        runner.testRecognition(OcrMap.TANKP, "global_resources/ocrmaps/TANKP.png");
     }
 
     public void testRecognition(OcrMap mapEnum, String subjectSourcePath) {
+        // holders for read digits and recognition map
         DigitMap[] maps = null;
         Recognition rec = null;
 
         try {
+            // load map and image
             rec = new Recognition(mapEnum);
             File file = new File(
                     subjectSourcePath);
             FileInputStream fis = new FileInputStream(file);
-
-            // given image
             BufferedImage image = ImageIO.read(fis);
+
+            // find digits in image
             maps = rec.extractDigitMapsFromImage(image);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -39,6 +41,7 @@ public class BirdOcrRunner {
             e.printStackTrace();
         }
 
+        // visualize found digits
         if (maps != null && rec != null) {
             for (DigitMap map : maps) {
                 System.out.println(rec.getDigitStringFromDigitMap(map));

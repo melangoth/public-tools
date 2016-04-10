@@ -128,28 +128,36 @@ public class Recognition {
         // draw and build maps
         DigitMap[] digitmaps = new DigitMap[rectangles.size()];
         for (int recti = 0; recti < rectangles.size(); recti++) {
-            Rectangle r = rectangles.get(recti);
-
-            // digitmap
-            DigitMap dm = new DigitMap(r.height, r.width);
-
-            for (int y = r.y; y < r.y + r.height; y++) {
-                for (int x = r.x; x < r.x + r.width; x++) {
-                    Color color = new Color(image.getRGB(x, y));
-                    int dx = x - r.x;
-                    int dy = y - r.y;
-
-                    if (isNumPixel(color)) {
-                        dm.bitmap[dy][dx] = 1;
-                    } else {
-                        dm.bitmap[dy][dx] = 0;
-                    }
-                } // for x
-            } // for y
-            dm.calcMetadata();
+            DigitMap dm = getDigitMapOfImageRectagle(image, new ImageRectangle(rectangles.get(recti)));
             digitmaps[recti] = dm;
         } // for numbers
         return digitmaps;
+    }
+
+    public DigitMap getDigitMapOfImageRectagle(BufferedImage image, ImageRectangle ir) {
+        // digitmap
+        int imgX = ir.getX();
+        int imgY = ir.getY();
+        int imgWidth = ir.getWidth();
+        int imgHeight = ir.getHeight();
+
+        DigitMap dm = new DigitMap(imgHeight, imgWidth);
+
+        for (int y = imgY; y < imgY + imgHeight; y++) {
+            for (int x = imgX; x < imgX + imgWidth; x++) {
+                Color color = new Color(image.getRGB(x, y));
+                int dx = x - imgX;
+                int dy = y - imgY;
+
+                if (isNumPixel(color)) {
+                    dm.bitmap[dy][dx] = 1;
+                } else {
+                    dm.bitmap[dy][dx] = 0;
+                }
+            } // for x
+        } // for y
+        dm.calcMetadata();
+        return dm;
     }
 
     public String getDigitStringFromDigitMap(DigitMap digitmap) {
@@ -175,6 +183,44 @@ public class Recognition {
 
     public DigitCollection getDigitCollection() {
         return this.useCollection;
+    }
+
+    public int getFirstColOfInterestFromImageRectange(BufferedImage image, ImageRectangle imageRectangle) {
+        int x;
+        int y;
+
+        for (x = imageRectangle.getX(); x < imageRectangle.getWidth(); x++) {
+            boolean foundCOI = false;
+            for (y = imageRectangle.getY(); y < imageRectangle.getHeight(); y++) {
+                Color c = new Color(image.getRGB(x, y));
+                if (isNumPixel(c)) {
+                    foundCOI = true;
+                    break;
+                }
+            }
+            if (foundCOI) break;
+        }
+
+        return x;
+    }
+
+    public int getFirstRowOfInterestFromImageRectange(BufferedImage image, ImageRectangle imageRectangle) {
+        int x;
+        int y;
+
+        for (y = imageRectangle.getY(); y < imageRectangle.getHeight(); y++) {
+            boolean foundCOI = false;
+            for (x = imageRectangle.getX(); x < imageRectangle.getWidth(); x++) {
+                Color c = new Color(image.getRGB(x, y));
+                if (isNumPixel(c)) {
+                    foundCOI = true;
+                    break;
+                }
+            }
+            if (foundCOI) break;
+        }
+
+        return y;
     }
 
     public enum OcrMap {
