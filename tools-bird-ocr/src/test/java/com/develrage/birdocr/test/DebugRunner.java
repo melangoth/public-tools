@@ -23,7 +23,7 @@ public class DebugRunner {
         DebugRunner runner = new DebugRunner();
 //        runner.testMapCreation(OcrMap.TANKA, "global_resources/ocrmaps/TANKA.png", new int[]{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}, "global_resources/ocrmaps/TANKA.json");
 //        runner.testRecognition(OcrMap.TANKA, "global_resources/ocrmaps/TANKA.png");
-        runner.testRecognition(Recognition.OcrMap.TANKP, "global_resources/ocrmaps/TANKP.png");
+        runner.testRecognition(Recognition.OcrMap.TANKP, "global_resources/ocrmaps/TANKPI.png");
     }
 
     public void testRecognition(Recognition.OcrMap mapEnum, String subjectSourcePath) {
@@ -49,7 +49,7 @@ public class DebugRunner {
             // get maps for subject
             String digits = "";
             DigitCollection recMaps = rec.getDigitCollection();
-            recMaps.setTreshold(80);
+            recMaps.setTreshold(90);
 
             // define boundaries
             int imgWidth = image.getWidth();
@@ -83,7 +83,7 @@ public class DebugRunner {
                             int found = recMaps.findDigit(tmpdm);
                             if (found > -1) {
                                 System.out.println(rec.getDigitStringFromDigitMap(tmpdm));
-                                log.debug("Found digit: " + found);
+                                log.debug(String.format("Found digit: %d in [%d,%d]", found, dm.getWidth(), dm.getHeight()));
                                 digits += Integer.toString(found);
                                 x += tmpdm.getWidth();
                                 y = 0;
