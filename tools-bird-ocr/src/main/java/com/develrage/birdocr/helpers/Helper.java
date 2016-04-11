@@ -2,6 +2,8 @@ package com.develrage.birdocr.helpers;
 
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -126,4 +128,37 @@ public class Helper {
         return is;
     }
 
+    public static BufferedImage loadImage(String path) throws IOException {
+        if (path.toLowerCase().startsWith("classpath://")) {
+            String temp = path.substring("classpath://".length());
+            if (temp.contains("/")) {
+                String classname = temp.substring(0, temp.indexOf("/"));
+                String relative = temp.substring(temp.indexOf("/") + 1);
+
+                try {
+                    Class clazz = Class.forName(classname);
+                    return loadImageFromClasspath(clazz, relative);
+                } catch (ClassNotFoundException e) {
+                    log.warn(String.format("Failed to find class: %s", classname), e);
+                    throw new FileNotFoundException(String.format("Invalid class name given in classpath: %s", path));
+                }
+            } else {
+                throw new FileNotFoundException(String.format("Invalid classpath file given: %s", path));
+            }
+        } else {
+            return loadImageFromFileSystem(path);
+        }
+    }
+
+    public static BufferedImage loadImageFromFileSystem(String path) throws IOException {
+        File f = new File(path);
+        BufferedImage image = ImageIO.read(f);
+        return image;
+    }
+
+    public static BufferedImage loadImageFromClasspath(Class clazz, String path) throws IOException {
+        File f = new File(path);
+        BufferedImage image = ImageIO.read(clazz.getClassLoader().getSystemResource(path));
+        return image;
+    }
 }
