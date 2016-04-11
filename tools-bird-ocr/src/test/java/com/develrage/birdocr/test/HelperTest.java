@@ -4,7 +4,9 @@ import com.develrage.birdocr.helpers.Helper;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 /**
@@ -67,5 +69,12 @@ public class HelperTest {
     public void test_getFileContent_PcpNoPackage() throws FileNotFoundException {
         log.info("test_getFileContent_PcpNoPackage");
         Helper.getFileContent("classpath://HelperTest/testfile1.txt");
+    }
+
+    @Test
+    public void test_loadImage_pClasspath() throws IOException {
+        log.info("test_loadImage_pClasspath");
+        BufferedImage image = Helper.loadImage("classpath://com.develrage.birdocr.test.HelperTest/images/tankp_test.png");
+        assert image.getWidth() > 0;
     }
 }
