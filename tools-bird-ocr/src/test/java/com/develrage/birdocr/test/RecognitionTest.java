@@ -30,7 +30,6 @@ public class RecognitionTest {
 
         Recognition rec = new Recognition("classpath://com.develrage.birdocr.test.RecognitionTest/ocrmaps/TANKP.json");
         String digits = rec.getRecognisedStringFromImage(image);
-        // todo: this is wrong (6600969486), make it good (66100969486)
-        assert digits.equals("6600969486");
+        assert digits.equals("66100969486");
     }
 }

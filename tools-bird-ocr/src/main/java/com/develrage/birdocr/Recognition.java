@@ -248,12 +248,12 @@ public class Recognition {
 
         // get first col of interest in image
         int x = this.getFirstColOfInterestFromImageRectange(image, new ImageRectangle(0, 0, imgWidth, imgHeight));
-        log.debug(String.format("Stepping by [%d] in image from [%d] to max [%d, %d]", step, x, imgWidth, imgHeight));
 
         // start inspecting image
         while (x < imgWidth - minWidth) {
             // get first row of interest in sub-image
             int y = this.getFirstRowOfInterestFromImageRectange(image, new ImageRectangle(x, 0, imgWidth, imgHeight));
+            log.trace(String.format("Stepping by [%d] in image from [%d,%d] to max [%d,%d]", step, x, y, imgWidth, imgHeight));
             boolean jump = false;
             while (y < imgHeight - minHeight) {
                 // on actual x,y coordinates, walk through maps
@@ -262,7 +262,8 @@ public class Recognition {
                     if (imgWidth - x - dm.getWidth() >= 0 && imgHeight - y - dm.getHeight() >= 0) {
                         // define actual ImageRectangle
                         ImageRectangle ir = new ImageRectangle(x, y, dm.getWidth(), dm.getHeight());
-                        log.trace(String.format("ImageRectangle [%d, %d, %d, %d]", ir.getX(), ir.getY(), ir.getWidth(), ir.getHeight()));
+                        log.trace(String.format("Looking for digit [%d] in [%d, %d, %d, %d]", dm.getDigit(), ir.getX(), ir.getY(), ir.getWidth(), ir.getHeight()));
+//                        System.out.println(this.getDigitStringFromDigitMap(this.getDigitMapOfImageRectagle(image, ir)));
 
                         // check if found any digit
                         DigitMap tmpdm = this.getDigitMapOfImageRectagle(image, ir);
