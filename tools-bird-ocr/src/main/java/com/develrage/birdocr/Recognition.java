@@ -13,9 +13,10 @@ import java.util.ArrayList;
 // TODO: library use, do not log, do not catch but throw exceptions!
 public class Recognition {
     private static final Logger log = Logger.getLogger(Recognition.class);
-    OcrMap useMap;
-    DigitCollection useCollection;
+    private OcrMap useMap;
+    private DigitCollection useCollection;
 
+    @Deprecated
     public Recognition(OcrMap ocrmap) throws JsonParseException,
             JsonMappingException, IOException {
         String json = Helper.getFileContent("global_resources/ocrmaps/" + ocrmap + ".json");
@@ -23,12 +24,20 @@ public class Recognition {
         useMap = useCollection.getOcrmap();
     }
 
+    public Recognition(String mapPath) throws IOException {
+        String json = Helper.getFileContent(mapPath);
+        useCollection = DigitCollection.getInstanceFromJson(json);
+        useMap = useCollection.getOcrmap();
+    }
+
+    @Deprecated
     public Recognition(OcrMap ocrMap, String mapPath) throws IOException {
         String json = Helper.getFileContent(mapPath);
         useCollection = DigitCollection.getInstanceFromJson(json);
         useMap = useCollection.getOcrmap();
     }
 
+    @Deprecated
     public Recognition(OcrMap ocrmap, BufferedImage image, int[] digitsOrder) {
         useMap = ocrmap;
         useCollection = this.createMap(image, digitsOrder);
@@ -221,6 +230,67 @@ public class Recognition {
         }
 
         return y;
+    }
+
+    public String getRecognisedStringFromImage(BufferedImage image) {
+        String digits = "";
+        DigitCollection recMaps = this.getDigitCollection();
+        recMaps.setTreshold(90);
+
+        // define boundaries
+        int imgWidth = image.getWidth();
+        int imgHeight = image.getHeight();
+        int minWidth = recMaps.getMinWidth();
+        int maxWidth = recMaps.getMaxWidth();
+        int minHeight = recMaps.getMinHeight();
+        int maxHeight = recMaps.getMaxHeight();
+        int step = 1;
+
+        // get first col of interest in image
+        int x = this.getFirstColOfInterestFromImageRectange(image, new ImageRectangle(0, 0, imgWidth, imgHeight));
+        log.debug(String.format("Stepping by [%d] in image from [%d] to max [%d, %d]", step, x, imgWidth, imgHeight));
+
+        // start inspecting image
+        while (x < imgWidth - minWidth) {
+            // get first row of interest in sub-image
+            int y = this.getFirstRowOfInterestFromImageRectange(image, new ImageRectangle(x, 0, imgWidth, imgHeight));
+            boolean jump = false;
+            while (y < imgHeight - minHeight) {
+                // on actual x,y coordinates, walk through maps
+                for (DigitMap dm : recMaps.getDigitmaps()) {
+                    // if actual digit map fits in actual imagerectangle
+                    if (imgWidth - x - dm.getWidth() >= 0 && imgHeight - y - dm.getHeight() >= 0) {
+                        // define actual ImageRectangle
+                        ImageRectangle ir = new ImageRectangle(x, y, dm.getWidth(), dm.getHeight());
+                        log.trace(String.format("ImageRectangle [%d, %d, %d, %d]", ir.getX(), ir.getY(), ir.getWidth(), ir.getHeight()));
+
+                        // check if found any digit
+                        DigitMap tmpdm = this.getDigitMapOfImageRectagle(image, ir);
+                        int found = recMaps.findDigit(tmpdm);
+                        if (found > -1) {
+                            System.out.println(this.getDigitStringFromDigitMap(tmpdm));
+                            log.debug(String.format("Found digit: %d in [%d,%d] @ [%d,%d]", found, dm.getWidth(), dm.getHeight(), x, y));
+                            digits += Integer.toString(found);
+                            x += tmpdm.getWidth();
+                            y = 0;
+                            jump = true;
+                            break;
+                        }
+                    }
+                }
+                if (jump) break;
+                // step
+                y++;
+            }
+
+            // step
+            if (!jump) x += step;
+        }
+        return digits;
+    }
+
+    public String getOcrmapName() {
+        return this.useMap.toString();
     }
 
     public enum OcrMap {
