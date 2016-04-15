@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Created by radvanyig
+ * Created by develrage
  */
 public class RecognitionTest {
     final static Logger log = Logger.getLogger(RecognitionTest.class);
